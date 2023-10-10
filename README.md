@@ -1,4 +1,4 @@
-# Canban (test)
+# Canban (test version)
 
 ## Структура проекта
 
