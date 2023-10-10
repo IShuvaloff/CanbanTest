@@ -1,24 +1,44 @@
 # help-me-in
 
-## Project setup
-```
-npm install
-```
+## Специфика проекта
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### Состав
 
-### Compiles and minifies for production
-```
-npm run build
-```
+1. Проект построен на шаблоне Vue (vue-3, typescript, vue-router, vuex, babel, eslint, axios, normalize.css, svg-спрайты, sass-loader);
+2. Добавлены компоненты BaseContainer, BaseButton, BaseButtonOut (базовые компоненты регистрируются глобально при запуске приложения), SvgIcon (компонент svg-иконки из сгенерированного при запуске приложения спрайта), ProductCard (карточка продукта), ProductDialog (модальное окно с формой для редактирования продукта);
+3. API-скрипт `scripts/api.ts` для первичной выгрузки списка продуктов с сайта <https://fakestoreapi.com/products>;
+4. Скрипт с интерфейсами `scripts/interfaces.ts` для объекта продукта и рейтинга;
+5. Скрипт хранилища `store/index.ts` с данными по продуктам и процедурами для добавления/обновления/удаления продукта;
+6. Файл главной страницы `views/HomeView.vue`.
 
-### Lints and fixes files
-```
-npm run lint
-```
+### Особенности
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+1. Drag-n-drop vue-компонентов выполнен впервые;
+2. Не хватает кэширования изображений для устранения повторной загрузки по URL-ссылке при изменении группы;
+3. Не стал делать сервер, т.к. либо это был бы либо простейший js-скрипт и json-файл, либо полноценный сервер на Express.js, на конфигурирование которого ушло бы больше времени, да и смысла в этом нет ради такой задачи. PHP-сервер когда-то запускал, но это было давно и уже неправда.
+
+### Установка
+
+1. Установить все зависимости:
+
+    ```js
+    npm install
+    ```
+
+2. Запуск проекта в режиме разработки:
+
+    ```js
+    npm run serve
+    ```
+
+3. Сборки и минификация проекта для деплоя:
+
+    ```js
+    npm run build
+    ```
+
+4. Исправление ошибок линтера:
+
+    ```js
+    npm run lint
+    ```

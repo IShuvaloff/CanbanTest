@@ -148,7 +148,6 @@ export default defineComponent({
   mounted() {
     this.stopScrolling();
     document.addEventListener('click', (item) => {
-      // закрыть модальное окно при клике вне его
       if (item.target === this.$refs['dialog']) {
         this.cancel();
       }
@@ -207,7 +206,7 @@ export default defineComponent({
     justify-content: center
     align-items: flex-start
     width: 100%
-    & > *
+    & > *:not(:last-child)
       width: 100%
       margin-bottom: 10px
   &__input
