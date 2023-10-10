@@ -101,21 +101,26 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapGetters(['getMaxProductId']),
-    plansProducts() {
-      return this.$store.state.products.filter(
-        (item: Product) => item.group === 1,
-      );
+    ...mapGetters(['getMaxProductId', 'getProducts']),
+    products(): [Product] {
+      return [...this.getProducts].sort(
+        (a, b) => b.rating?.rate - a.rating?.rate,
+      ) as [Product];
     },
-    workingProducts() {
-      return this.$store.state.products.filter(
-        (item: Product) => item.group === 2,
-      );
+    plansProducts(): [Product] {
+      return this.products.filter((item: Product) => item.group === 1) as [
+        Product,
+      ];
     },
-    completeProducts() {
-      return this.$store.state.products.filter(
-        (item: Product) => item.group === 3,
-      );
+    workingProducts(): [Product] {
+      return this.products.filter((item: Product) => item.group === 2) as [
+        Product,
+      ];
+    },
+    completeProducts(): [Product] {
+      return this.products.filter((item: Product) => item.group === 3) as [
+        Product,
+      ];
     },
   },
   methods: {

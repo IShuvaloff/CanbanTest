@@ -1,5 +1,12 @@
 <template>
-  <div class="card" :class="cardTypeClass">
+  <div class="card" :class="cardTypeClass" @dblclick="dialogOpen">
+    <ProductDialog
+      v-if="isDialogOpened"
+      :product="card"
+      @cancel="dialogClose"
+      @submit="dialogSubmit"
+    />
+
     <div class="card__container">
       <img class="card__img" :src="photo" alt="Фото" />
 
@@ -36,6 +43,13 @@
         />
       </div>
     </div>
+
+    <SvgIcon
+      class="icon icon--delete card__icon card__icon--edit"
+      name="iconEdit"
+      title="Изменить запись"
+      @click="dialogOpen"
+    />
     <SvgIcon
       class="icon icon--delete card__icon card__icon--delete"
       name="iconPlus"
@@ -47,14 +61,20 @@
 
 <script lang="ts">
 import { Product } from '@/scripts/interfaces';
-import { PropType, defineComponent } from 'vue';
+import { PropType, defineComponent, defineAsyncComponent } from 'vue';
 import SvgIcon from './SvgIcon.vue';
 import { mapMutations } from 'vuex';
 
 export default defineComponent({
   name: 'ProductCard',
-  components: { SvgIcon },
-  mixins: [],
+  components: {
+    SvgIcon,
+    ProductDialog: defineAsyncComponent({
+      loader: () => import('@/components/ProductDialog.vue'),
+      delay: 0,
+      loadingComponent: () => '<h2>Загрузка...</h2>',
+    }),
+  },
   props: {
     card: {
       type: Object as PropType<Product>,
@@ -62,7 +82,9 @@ export default defineComponent({
     },
   },
   data() {
-    return {};
+    return {
+      isDialogOpened: false,
+    };
   },
   computed: {
     cardTypeClass() {
@@ -84,12 +106,26 @@ export default defineComponent({
       );
     },
   },
-  watch: {},
-  emits: [],
   methods: {
     ...mapMutations(['deleteProduct', 'updateProduct']),
+    dialogOpen() {
+      this.isDialogOpened = true;
+    },
+    dialogClose() {
+      this.isDialogOpened = false;
+    },
+    dialogSubmit(product: Product) {
+      this.dialogClose();
+      this.updateProduct({
+        ...product,
+        price: product.price ?? 0,
+      });
+    },
     deleteCard() {
       this.deleteProduct(this.card?.id);
+    },
+    editCard() {
+      this.updateProduct(this.card);
     },
     moveToGroup(group: number) {
       if (![1, 2, 3].includes(group)) return;
@@ -125,6 +161,13 @@ export default defineComponent({
   &--complete
     background-color: $color-bg-card-complete
   &__icon
+    &--edit
+      position: absolute
+      top: 10px
+      left: 10px
+      width: 20px
+      height: 20px
+      fill: $color-primary
     &--delete
       position: absolute
       top: 5px

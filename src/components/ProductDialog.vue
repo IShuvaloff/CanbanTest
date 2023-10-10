@@ -66,7 +66,7 @@
             />
             <BaseButtonOut
               class="button button--primery dialog__btn dialog__btn--submit"
-              caption="Добавить"
+              :caption="submitBtnTitle"
               type="submit"
               @click="submit"
             />
@@ -96,6 +96,9 @@ export default defineComponent({
   computed: {
     title() {
       return !this.product ? 'Добавить новый продукт' : 'Изменить продукт';
+    },
+    submitBtnTitle() {
+      return !this.product ? 'Добавить' : 'Обновить';
     },
   },
   emits: ['submit', 'cancel'],
@@ -174,9 +177,7 @@ export default defineComponent({
     justify-content: stretch
     align-items: stretch
     padding: 30px
-    padding-left: 50px
     background-color: white
-    // border: 1px solid #222
     box-shadow: 4px 4px 8px 0px rgba(black, 0.5)
     max-height: 600px
     max-width: 90%
@@ -217,7 +218,7 @@ export default defineComponent({
     &--title
       margin-bottom: 3px
     &--descr
-      // height: 80px
+      height: 100px
       resize: vertical
   &__input-error
     margin-bottom: 7px
