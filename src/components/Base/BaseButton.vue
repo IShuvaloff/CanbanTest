@@ -21,7 +21,7 @@ export default defineComponent({
 </script>
 
 <style lang="sass" scoped>
-@import '../../assets/sass/variables'
+@import '@/assets/sass/variables'
 
 .base-btn
   padding: 10px
@@ -29,7 +29,7 @@ export default defineComponent({
   border-radius: 6px
   font-weight: 600
   font-size: 16px
-  color: $color-text-light
+  color: $color-gs-1
   letter-spacing: 0.15px
   transition: background-color .2s ease-in-out
   &:focus, &:hover
@@ -54,6 +54,10 @@ export default defineComponent({
       background-color: lighten($color-complete, 10%)
     &:active
       background-color: darken($color-complete, 5%)
+
+@media (max-width: 991.98px)
+  .base-btn
+    font-size: 14px
 
 @media (max-width: 575.98px)
   .base-btn

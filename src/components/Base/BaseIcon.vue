@@ -56,7 +56,7 @@ export default defineComponent({
 @import '../../assets/sass/variables'
 
 .icon
-  fill: $color-text
+  fill: $color-gs-7
   &--clicked
     fill: #009BF2
   &--hovered

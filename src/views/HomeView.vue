@@ -1,6 +1,13 @@
 <template>
   <BaseContainer class="home">
     <h1 class="home__header">Canban-сетка</h1>
+
+    <ProductDialog
+      v-if="isDialogOpened"
+      @cancel="dialogClose"
+      @submit="dialogSubmit"
+    />
+
     <div class="group">
       <div class="group__header">
         <h2 class="group__header-text">В ПЛАНАХ</h2>
@@ -8,23 +15,62 @@
           class="icon icon--add group__header-icon"
           name="iconPlus"
           title="Добавить запись"
-          @click="addProduct"
+          @click="dialogOpen"
         />
       </div>
-      <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        :card="product"
-      />
+      <div
+        class="group__products"
+        @drop="onDrop($event, 1)"
+        @dragover.prevent
+        @dragend.prevent
+      >
+        <ProductCard
+          v-for="product in plansProducts"
+          :key="product.id"
+          :card="product"
+          @dragstart="onDragStart($event, product)"
+          draggable="true"
+        />
+      </div>
     </div>
+
     <div class="group">
       <div class="group__header">
         <h2 class="group__header-text">В РАБОТЕ</h2>
       </div>
+      <div
+        class="group__products"
+        @drop="onDrop($event, 2)"
+        @dragover.prevent
+        @dragend.prevent
+      >
+        <ProductCard
+          v-for="product in workingProducts"
+          :key="product.id"
+          :card="product"
+          @dragstart="onDragStart($event, product)"
+          draggable="true"
+        />
+      </div>
     </div>
+
     <div class="group">
       <div class="group__header">
         <h2 class="group__header-text">ГОТОВО</h2>
+      </div>
+      <div
+        class="group__products"
+        @drop="onDrop($event, 3)"
+        @dragover.prevent
+        @dragend.prevent
+      >
+        <ProductCard
+          v-for="product in completeProducts"
+          :key="product.id"
+          :card="product"
+          @dragstart="onDragStart($event, product)"
+          draggable="true"
+        />
       </div>
     </div>
   </BaseContainer>
@@ -33,37 +79,80 @@
 <script lang="ts">
 import { loadProducts } from '@/scripts/api';
 import { Product } from '@/scripts/interfaces';
-import { defineComponent } from 'vue';
+import { defineComponent, defineAsyncComponent } from 'vue';
 import ProductCard from '@/components/ProductCard.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default defineComponent({
   name: 'HomeView',
-  components: { ProductCard, SvgIcon },
+  components: {
+    ProductCard,
+    SvgIcon,
+    ProductDialog: defineAsyncComponent({
+      loader: () => import('@/components/ProductDialog.vue'),
+      delay: 0,
+      loadingComponent: () => '<h2>Загрузка...</h2>',
+    }),
+  },
   data() {
     return {
-      products: [] as Product[],
+      isDialogOpened: false,
     };
   },
-  watch: {
-    products(value) {
-      console.log(value);
+  computed: {
+    ...mapGetters(['getMaxProductId']),
+    plansProducts() {
+      return this.$store.state.products.filter(
+        (item: Product) => item.group === 1,
+      );
+    },
+    workingProducts() {
+      return this.$store.state.products.filter(
+        (item: Product) => item.group === 2,
+      );
+    },
+    completeProducts() {
+      return this.$store.state.products.filter(
+        (item: Product) => item.group === 3,
+      );
     },
   },
   methods: {
-    addProduct() {
-      // TODO: добавить новый продукт:
-      //  1. открыть диалоговое окно;
-      //  2. ввести данные;
-      //  3. сохранить.
+    ...mapMutations(['addProduct', 'updateProduct']),
+    dialogOpen() {
+      this.isDialogOpened = true;
+    },
+    dialogClose() {
+      this.isDialogOpened = false;
+    },
+    dialogSubmit(product: Product) {
+      this.dialogClose();
+      this.addProduct({
+        ...product,
+        id: this.getMaxProductId + 1,
+        group: 1,
+        rating: { rate: 0, count: 0 },
+        price: product.price ?? 0,
+      });
+    },
+    onDragStart(event: DragEvent, item: Product) {
+      if (!event.dataTransfer) return;
+      event.dataTransfer.dropEffect = 'move';
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('item', JSON.stringify(item));
+    },
+    onDrop(event: DragEvent, group: number) {
+      const product = JSON.parse(event.dataTransfer?.getData('item') as string);
+      this.updateProduct({ ...product, group });
     },
   },
   created() {
+    if (this.$store.state.products.length > 0) return;
+
     loadProducts()
       .then((list) => {
-        list.forEach((item: Product) =>
-          this.products.push({ ...item, group: 1 }),
-        );
+        list.forEach((item: Product) => this.addProduct({ ...item, group: 1 }));
       })
       .catch((err) => {
         console.log(`Ошибка загрузки списка продуктов с сайта: ${err.message}`);
@@ -83,6 +172,7 @@ export default defineComponent({
   display: flex
   flex-direction: column
   align-items: center
+  justify-content: stretch
   min-width: 200px
   width: 100%
   // outline: 1px solid red
@@ -100,6 +190,13 @@ export default defineComponent({
       stroke-width: 3px
       width: 50px
       height: 50px
+  &__products
+    display: flex
+    flex-direction: column
+    align-items: center
+    width: 100%
+    height: 100%
+
 .card
   &:not(:last-child)
     margin-bottom: 20px

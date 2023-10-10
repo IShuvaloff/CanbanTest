@@ -1,7 +1,7 @@
 <template>
   <div class="card" :class="cardTypeClass">
     <div class="card__container">
-      <img class="card__img" :src="card?.image" alt="Фото" />
+      <img class="card__img" :src="photo" alt="Фото" />
 
       <div class="card__content">
         <div class="card__rating">
@@ -20,16 +20,19 @@
           class="base-btn--plans card__option"
           caption="В планы"
           v-show="card?.group !== 1"
+          @click="moveToPlans"
         />
         <BaseButton
           class="base-btn--working card__option"
           caption="В работу"
           v-show="card?.group !== 2"
+          @click="moveToWorking"
         />
         <BaseButton
           class="base-btn--complete card__option"
           caption="Завершить"
           v-show="card?.group !== 3"
+          @click="moveToComplete"
         />
       </div>
     </div>
@@ -37,7 +40,7 @@
       class="icon icon--delete card__icon card__icon--delete"
       name="iconPlus"
       title="Удалить запись"
-      @click="deleteProduct"
+      @click="deleteCard"
     />
   </div>
 </template>
@@ -46,6 +49,7 @@
 import { Product } from '@/scripts/interfaces';
 import { PropType, defineComponent } from 'vue';
 import SvgIcon from './SvgIcon.vue';
+import { mapMutations } from 'vuex';
 
 export default defineComponent({
   name: 'ProductCard',
@@ -73,16 +77,34 @@ export default defineComponent({
           return '';
       }
     },
+    photo() {
+      return (
+        this.card?.image ??
+        new URL('@/assets/no-photo.jpg', import.meta.url).href
+      );
+    },
   },
   watch: {},
   emits: [],
   methods: {
-    deleteProduct() {
-      // TODO: удалить продукт
+    ...mapMutations(['deleteProduct', 'updateProduct']),
+    deleteCard() {
+      this.deleteProduct(this.card?.id);
+    },
+    moveToGroup(group: number) {
+      if (![1, 2, 3].includes(group)) return;
+      this.updateProduct({ ...this.card, group });
+    },
+    moveToPlans() {
+      this.moveToGroup(1);
+    },
+    moveToWorking() {
+      this.moveToGroup(2);
+    },
+    moveToComplete() {
+      this.moveToGroup(3);
     },
   },
-  // created() {},
-  // mounted() {},
 });
 </script>
 
@@ -121,6 +143,7 @@ export default defineComponent({
     border-top-left-radius: 6px
     border-top-right-radius: 6px
     max-height: 300px
+    max-width: 75%
   &__content
     display: flex
     flex-direction: column
@@ -135,12 +158,15 @@ export default defineComponent({
     font-size: 16px
   &__title
     font-size: 24px
+    word-break: break-word
   &__category
     align-self: flex-end
     margin-bottom: 10px
     font-weight: 600
     font-size: 14px
-    color: $color-disabled-brd
+    color: $color-gs-5
+  &__descr
+    word-break: break-word
   &__price
     align-self: flex-end
     margin-bottom: 10px
@@ -152,7 +178,7 @@ export default defineComponent({
     justify-content: stretch
   &__option
     width: 100%
-    color: $color-text !important
+    color: $color-gs-7 !important
     &:not(:last-child)
       margin-right: 10px
 

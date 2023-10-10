@@ -3,6 +3,7 @@
     <router-link to="/">Главная</router-link>
   </nav>
   <router-view />
+  <div id="teleport-target"></div>
 </template>
 
 <style lang="sass">
