@@ -9,7 +9,6 @@ export async function loadProducts() {
   return axios
     .get(`/products`)
     .then((res) => {
-      // console.log(res.data);
       return res.data as [Product];
     })
     .catch((err) => {
