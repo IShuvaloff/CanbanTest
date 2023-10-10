@@ -5,12 +5,6 @@
         <div class="dialog__header">
           <span>{{ title }}</span>
           <span class="dialog__header-close" title="Закрыть" @click="cancel" />
-          <SvgIcon
-            class="icon icon--close dialog__icon dialog__icon--close"
-            name="iconPlus"
-            title="Закрыть диалог"
-            @click="cancel"
-          />
         </div>
 
         <form class="dialog__content" @submit="submit">
@@ -64,7 +58,7 @@
               caption="Закрыть"
               @click="cancel"
             />
-            <BaseButtonOut
+            <BaseButton
               class="button button--primery dialog__btn dialog__btn--submit"
               :caption="submitBtnTitle"
               type="submit"
@@ -79,12 +73,11 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import SvgIcon from './SvgIcon.vue';
 import { Product } from '@/scripts/interfaces';
 
 export default defineComponent({
   name: 'ProductDialog',
-  components: { SvgIcon },
+  components: {},
   props: {
     product: Object as PropType<Product>,
   },
@@ -95,7 +88,9 @@ export default defineComponent({
   },
   computed: {
     title() {
-      return !this.product ? 'Добавить новый продукт' : 'Изменить продукт';
+      return !this.product
+        ? 'Добавить новый продукт'
+        : 'Изменить текущий продукт';
     },
     submitBtnTitle() {
       return !this.product ? 'Добавить' : 'Обновить';
@@ -170,6 +165,7 @@ export default defineComponent({
   justify-content: center
   align-items: center
   background: rgba(51, 51, 51, 0.6)
+  overflow: auto
   &__wrapper
     display: flex
     flex-direction: column
@@ -177,6 +173,7 @@ export default defineComponent({
     align-items: stretch
     padding: 30px
     background-color: white
+    border-radius: 6px
     box-shadow: 4px 4px 8px 0px rgba(black, 0.5)
     max-height: 600px
     max-width: 90%
@@ -204,7 +201,7 @@ export default defineComponent({
     display: flex
     flex-direction: column
     justify-content: center
-    align-items: flex-start
+    align-items: stretch
     width: 100%
     & > *:not(:last-child)
       width: 100%
@@ -215,7 +212,7 @@ export default defineComponent({
     border-bottom: 1px solid $color-gs-5
     height: 25px
     &--title
-      margin-bottom: 3px
+      margin-bottom: 3px !important
     &--descr
       height: 100px
       resize: vertical
@@ -231,16 +228,22 @@ export default defineComponent({
     flex-shrink: 0
     display: flex
     justify-content: flex-end
-    align-items: stretch
     margin-top: 10px
   &__btn
     display: flex
     align-items: center
     justify-content: center
-    padding: 15px 15px 12px
-    width: 160px
-  // &__btn--submit
-  //   width: 160px
   &__btn--close
     margin-right: 20px
+
+@media (max-width: 575.98px)
+  .dialog
+    &__wrapper
+      padding: 15px
+    &__header
+      font-size: 22px
+    &__input
+      font-size: 14px
+    &__btn--close
+      margin-right: 10px
 </style>

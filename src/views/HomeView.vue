@@ -10,7 +10,7 @@
 
     <div class="group">
       <div class="group__header">
-        <h2 class="group__header-text">В ПЛАНАХ</h2>
+        <h2 class="group__header-text">ПЛАНЫ</h2>
         <SvgIcon
           class="icon icon--add group__header-icon"
           name="iconPlus"
@@ -24,6 +24,7 @@
         @dragover.prevent
         @dragend.prevent
       >
+        <BaseSpinner :visible="isLoading" size="huge" color="#CD5C5C" />
         <ProductCard
           v-for="product in plansProducts"
           :key="product.id"
@@ -98,6 +99,7 @@ export default defineComponent({
   data() {
     return {
       isDialogOpened: false,
+      isLoading: false,
     };
   },
   computed: {
@@ -155,13 +157,15 @@ export default defineComponent({
   created() {
     if (this.$store.state.products.length > 0) return;
 
+    this.isLoading = true;
     loadProducts()
       .then((list) => {
         list.forEach((item: Product) => this.addProduct({ ...item, group: 1 }));
       })
       .catch((err) => {
         console.log(`Ошибка загрузки списка продуктов с сайта: ${err.message}`);
-      });
+      })
+      .finally(() => (this.isLoading = false));
   },
 });
 </script>
@@ -186,6 +190,7 @@ export default defineComponent({
     justify-content: center
     align-items: center
     margin-bottom: 20px
+    height: 30px
     &-text
       // margin-right: 20px
       font-weight: 600

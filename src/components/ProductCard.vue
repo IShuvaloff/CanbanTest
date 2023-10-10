@@ -100,10 +100,9 @@ export default defineComponent({
       }
     },
     photo() {
-      return (
-        this.card?.image ??
-        new URL('@/assets/no-photo.jpg', import.meta.url).href
-      );
+      return this.card?.image
+        ? this.card.image
+        : new URL('@/assets/no-photo.jpg', import.meta.url).href;
     },
   },
   methods: {
@@ -180,11 +179,10 @@ export default defineComponent({
     display: flex
     flex-direction: column
     align-items: stretch
-    padding: 10px
+    padding: 20px
   &__img
     align-self: center
-    border-top-left-radius: 6px
-    border-top-right-radius: 6px
+    border-radius: 6px
     max-height: 300px
     max-width: 75%
   &__content
@@ -229,6 +227,8 @@ export default defineComponent({
   .card
     &__img
       max-height: 250px
+    &__container
+      padding: 10px
     &__rating
       font-size: 13px
     &__title
