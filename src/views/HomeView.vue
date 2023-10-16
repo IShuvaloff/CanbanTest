@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { loadProducts, DBProductAdd } from '@/scripts/api';
+import { loadProducts, DBProductAdd, DBProductEdit } from '@/scripts/api';
 import { Product } from '@/scripts/interfaces';
 import { defineComponent, defineAsyncComponent } from 'vue';
 import ProductCard from '@/components/ProductCard.vue';
@@ -135,7 +135,7 @@ export default defineComponent({
     },
     async dialogSubmit(product: Product) {
       this.dialogClose();
-      const newId = await DBProductAdd(product);
+      const newId = await DBProductAdd(product); // ! TODO: надо бы перенести в store.addProduct
       if (newId < 0) return;
 
       this.addProduct({
@@ -154,17 +154,21 @@ export default defineComponent({
     },
     onDrop(event: DragEvent, group: number) {
       const product = JSON.parse(event.dataTransfer?.getData('item') as string);
-      this.updateProduct({ ...product, group });
+      const productUpdated = { ...product, group };
+
+      DBProductEdit(productUpdated); // ! TODO: надо бы перенести в store.updateProduct
+
+      this.updateProduct(productUpdated);
     },
   },
   created() {
-    if (this.$store.state.products.length > 0) return;
-
     this.isLoading = true;
     loadProducts()
       .then((list) => {
         if (!list || !list.length) return;
-        list.forEach((item: Product) => this.addProduct({ ...item, group: 1 }));
+        list.forEach((item: Product) =>
+          this.addProduct({ ...item, group: +item.group }),
+        );
       })
       .catch((err) => {
         console.log(`Ошибка загрузки списка продуктов с сайта: ${err.message}`);

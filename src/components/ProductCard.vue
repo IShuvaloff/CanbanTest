@@ -116,7 +116,8 @@ export default defineComponent({
     },
     dialogSubmit(product: Product) {
       this.dialogClose();
-      DBProductEdit(product);
+
+      DBProductEdit(product); // ! TODO: надо бы перенести в store.updateProduct
 
       this.updateProduct({
         ...product,
@@ -131,6 +132,9 @@ export default defineComponent({
     },
     moveToGroup(group: number) {
       if (![1, 2, 3].includes(group)) return;
+
+      DBProductEdit({ ...this.card, group } as Product); // ! TODO: надо бы перенести в store.updateProduct
+
       this.updateProduct({ ...this.card, group });
     },
     moveToPlans() {
