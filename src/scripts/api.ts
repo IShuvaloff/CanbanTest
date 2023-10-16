@@ -40,3 +40,15 @@ export async function DBProductEdit(product: Product) {
       return false;
     });
 }
+
+export async function DBProductDelete(id: number) {
+  return axios
+    .delete(`/products/${id}`)
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((err) => {
+      console.log(err.message);
+      return false;
+    });
+}

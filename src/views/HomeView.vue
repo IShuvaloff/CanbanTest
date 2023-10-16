@@ -162,6 +162,8 @@ export default defineComponent({
     },
   },
   created() {
+    if (this.$store.state.products.length > 0) return;
+
     this.isLoading = true;
     loadProducts()
       .then((list) => {

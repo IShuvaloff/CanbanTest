@@ -64,7 +64,7 @@ import { Product } from '@/scripts/interfaces';
 import { PropType, defineComponent, defineAsyncComponent } from 'vue';
 import SvgIcon from './SvgIcon.vue';
 import { mapMutations } from 'vuex';
-import { DBProductEdit } from '@/scripts/api';
+import { DBProductEdit, DBProductDelete } from '@/scripts/api';
 
 export default defineComponent({
   name: 'ProductCard',
@@ -125,6 +125,8 @@ export default defineComponent({
       });
     },
     deleteCard() {
+      DBProductDelete(this.card?.id as number); // ! TODO: надо бы перенести это в store.deleteProduct
+
       this.deleteProduct(this.card?.id);
     },
     editCard() {

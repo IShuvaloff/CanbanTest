@@ -4,7 +4,7 @@ export interface ProductRating {
 }
 
 export interface Product {
-  id: string;
+  id: number;
   title: string;
   group: number;
   price?: number;
