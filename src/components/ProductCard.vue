@@ -129,9 +129,6 @@ export default defineComponent({
 
       this.deleteProduct(this.card?.id);
     },
-    editCard() {
-      this.updateProduct(this.card);
-    },
     moveToGroup(group: number) {
       if (![1, 2, 3].includes(group)) return;
 
