@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { loadProducts } from '@/scripts/api';
+import { loadProducts, addNewProduct } from '@/scripts/api';
 import { Product } from '@/scripts/interfaces';
 import { defineComponent, defineAsyncComponent } from 'vue';
 import ProductCard from '@/components/ProductCard.vue';
@@ -133,11 +133,14 @@ export default defineComponent({
     dialogClose() {
       this.isDialogOpened = false;
     },
-    dialogSubmit(product: Product) {
+    async dialogSubmit(product: Product) {
       this.dialogClose();
+      const newId = await addNewProduct(product);
+      if (newId < 0) return;
+
       this.addProduct({
         ...product,
-        id: this.getMaxProductId + 1,
+        id: newId,
         group: 1,
         rating: { rate: 0, count: 0 },
         price: product.price ?? 0,
@@ -160,6 +163,7 @@ export default defineComponent({
     this.isLoading = true;
     loadProducts()
       .then((list) => {
+        if (!list || !list.length) return;
         list.forEach((item: Product) => this.addProduct({ ...item, group: 1 }));
       })
       .catch((err) => {
