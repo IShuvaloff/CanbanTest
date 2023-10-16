@@ -64,6 +64,7 @@ import { Product } from '@/scripts/interfaces';
 import { PropType, defineComponent, defineAsyncComponent } from 'vue';
 import SvgIcon from './SvgIcon.vue';
 import { mapMutations } from 'vuex';
+import { DBProductEdit } from '@/scripts/api';
 
 export default defineComponent({
   name: 'ProductCard',
@@ -115,6 +116,8 @@ export default defineComponent({
     },
     dialogSubmit(product: Product) {
       this.dialogClose();
+      DBProductEdit(product);
+
       this.updateProduct({
         ...product,
         price: product.price ?? 0,

@@ -16,12 +16,24 @@ export async function loadProducts() {
     });
 }
 
-export async function addNewProduct(product: Product) {
+export async function DBProductAdd(product: Product) {
   return axios
     .post(`/products`, product)
     .then((res) => {
       console.log(res.data);
       return res.data[0].result;
+    })
+    .catch((err) => {
+      console.log(err.message);
+      return false;
+    });
+}
+
+export async function DBProductEdit(product: Product) {
+  return axios
+    .put(`/products`, product)
+    .then((res) => {
+      console.log(res.data);
     })
     .catch((err) => {
       console.log(err.message);

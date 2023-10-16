@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { loadProducts, addNewProduct } from '@/scripts/api';
+import { loadProducts, DBProductAdd } from '@/scripts/api';
 import { Product } from '@/scripts/interfaces';
 import { defineComponent, defineAsyncComponent } from 'vue';
 import ProductCard from '@/components/ProductCard.vue';
@@ -135,7 +135,7 @@ export default defineComponent({
     },
     async dialogSubmit(product: Product) {
       this.dialogClose();
-      const newId = await addNewProduct(product);
+      const newId = await DBProductAdd(product);
       if (newId < 0) return;
 
       this.addProduct({
